@@ -42,7 +42,22 @@
 	<script>
 		var planetarium;
 		S(document).ready(function(){
-			planetarium = S.virtualsky({id:'preview',width:500,height:350});
+			planetarium = S.virtualsky({id:'preview',width:500,height:350,
+			projection: 'stereo', 
+			mouse: true,
+			keyboard: false, 
+			fov:15,
+			constellations: true, 
+			latitude: 55.75,  // Москва
+			longitude: 37.62,
+			ecliptic: false,
+			showstarlabels: true,
+			meteorshowers: true,
+			scalestars: 2,
+			showgalaxy: false,
+			fontsize: '16',
+			lang:'ru',
+		});
 			planetarium.draw();
 			update();
 		});
@@ -59,14 +74,6 @@
 				}else{
 					planetarium.clock = new Date();
 					changedtime = false;
-				}
-			}
-			if(property == 'dimensions'){
-				dim = value.split('x');
-				if(dim.length == 2){
-					planetarium.resize(dim[0],dim[1]);
-					el = document.getElementById(planetarium.id);
-					S('#'+planetarium.id).css({'height':planetarium.tall+'px','width':planetarium.wide+'px'})
 				}
 			}
 			
@@ -87,8 +94,6 @@
 <form>
 <ol>
 	<li class="options">
-
-		<h2>Customize</h2>
 		<div class="i">
 			<label class="p" for="clock">Specific date?</label>
 			<div class="o">
@@ -102,9 +107,9 @@
 			<input type="text" name="position" id="position" value="" onChange="update(this)" /> in decimal degrees
 			</div>
 		</div>
-
-		
+	</li>
 </ol>
+
 </form>
 
 </body>
