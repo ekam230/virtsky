@@ -1,5 +1,6 @@
 <?php
 
+// echo('dsadsadas');
 // if(!empty($_GET['query'])){
 // 		$query = (string)$_GET['query'];
 // 		$array = array();

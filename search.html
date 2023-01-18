@@ -58,6 +58,7 @@
 	<div class="search_area">
 		<form action="" method="GET">
 			<input type="text" name="query" id="search_box" value="" autocomplete="off">
+            <span  id="latcon"></span>
 			<!-- <input type="submit" value="Поиск"> -->
 		</form>
 		<div id="search_advice_wrapper"></div>
@@ -99,7 +100,7 @@
                                 for(var i in list){
                                     if(list[i] != ''){
                                         // добавляем слою позиции
-                                        $('#search_advice_wrapper').append('<div class="advice_variant">'+list[i][0]+','+list[i][1]+'</div>');
+                                        $('#search_advice_wrapper').append('<div class="advice_variant">'+list[i]+'</div>');
                                     }
                                 }
                             }
@@ -133,7 +134,8 @@
         // делаем обработку клика по подсказке
         $('.advice_variant').live('click',function(){
             // ставим текст в input поиска
-            $('#search_box').val($(this).text());
+            $('#search_box').val($(this).text().split(',')[0]+','+$(this).text().split(',')[1]);
+            $('#latcon').text($(this).text().split(',')[2]+','+$(this).text().split(',')[3])
             // прячем слой подсказки
             $('#search_advice_wrapper').fadeOut(350).html('');
         });
