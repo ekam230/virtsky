@@ -1,59 +1,143 @@
 <!DOCTYPE html>
 <html>
+
+<script src="//yandex.st/jquery/1.7.2/jquery.min.js"></script>
 <head>
-    <title>Простой живой поиск</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <script src="//yandex.st/jquery/1.7.2/jquery.min.js"></script>
+	<!--
+		Virtual Sky <canvas> application
+		(c) 2010-2012 Stuart Lowe (Las Cumbras Observatory Global Telescope)
+	-->
+	<style>
+	body {
+		background: #fff;
+		font-family: 'Trebuchet MS',Tahoma,Helvetica,Verdana,sans-serif;
+		color: black;
+		padding: 2em;
+		margin: 0px;
+	}
+	li.options .i {
+		clear: both;
+		min-height: 2em;
+	}
+	li.options .p {
+		display: inline-block;
+		width: 10em;
+	}
+	li.options .o {
+		display: inline-block;
+		margin-right: 16px;
+	}
+	li.options .h {
+		margin-bottom: 1em;
+		display: inline-block;
+		opacity: 0.2;
+		filter: alpha(20);
+	}
+	li.options .i:hover .h {
+		opacity: 0.7;
+		filter: alpha(70);
+	}
 
-    <style>
-		.search_area{
-			width: 350px;
-			margin: 0px;
-			position: relative;
-		}
+	/* Search */
+	.search_area{
+		width: 350px;
+		margin: 0px;
+		position: relative;
+	}
 
-		#search_box{
-			width:200px;
-			padding:2px;
-			margin:1px;
-			border:1px solid #000;
-		}
+	#search_box{
+		width:200px;
+		padding:2px;
+		margin:1px;
+		border:1px solid #000;
+	}
 
-		#search_advice_wrapper{
-			display:none;
-			width: 350px;
-			background-color: rgb(80, 80, 114);
-			color: rgb(255, 227, 189);
-			-moz-opacity: 0.95;
-			opacity: 0.95;
-			-ms-filter:"progid:DXImageTransform.Microsoft.Alpha"(Opacity=95);
-			filter: progid:DXImageTransform.Microsoft.Alpha(opacity=95);
-			filter:alpha(opacity=95);
-			z-index:999;
-			position: absolute;
-			top: 24px; left: 0px;
-		}
+	#search_advice_wrapper{
+		display:none;
+		width: 350px;
+		background-color: rgb(80, 80, 114);
+		color: rgb(255, 227, 189);
+		-moz-opacity: 0.95;
+		opacity: 0.95;
+		-ms-filter:"progid:DXImageTransform.Microsoft.Alpha"(Opacity=95);
+		filter: progid:DXImageTransform.Microsoft.Alpha(opacity=95);
+		filter:alpha(opacity=95);
+		z-index:999;
+		position: absolute;
+		top: 24px; left: 0px;
+	}
 
-		#search_advice_wrapper .advice_variant{
-			cursor: pointer;
-			padding: 5px;
-			text-align: left;
-		}
-		#search_advice_wrapper .advice_variant:hover{
-			color:#FEFFBD;
-			background-color:#818187;
-		}
-		#search_advice_wrapper .active{
-			cursor: pointer;
-			padding: 5px;
-			color:#FEFFBD;
-			background-color:#818187;
-		}
+	#search_advice_wrapper .advice_variant{
+		cursor: pointer;
+		padding: 5px;
+		text-align: left;
+	}
+	#search_advice_wrapper .advice_variant:hover{
+		color:#FEFFBD;
+		background-color:#818187;
+	}
+	#search_advice_wrapper .active{
+		cursor: pointer;
+		padding: 5px;
+		color:#FEFFBD;
+		background-color:#818187;
+	}
+	/* Search */
+	</style>
+	<script src="stuquery.min.js"></script>
+	<script src="virtualsky.js" type="text/javascript"></script>
 
-    </style>
+	<script>
+		var planetarium;
+		S(document).ready(function(){
+			planetarium = S.virtualsky({id:'preview',width:500,height:350,
+			projection: 'stereo', 
+			mouse: true,
+			keyboard: false, 
+			fov:15,
+			constellations: true, 
+			latitude: 55.75,  // Москва
+			longitude: 37.62,
+			ecliptic: false,
+			showstarlabels: true,
+			meteorshowers: true,
+			scalestars: 2,
+			showgalaxy: false,
+			fontsize: '16',
+			lang:'ru',
+		});
+			planetarium.draw();
+			update();
+		});
+		var changedtime = false;
+		function update(el) {
+			property = (el) ? el.name : "";
+			value = (el) ? el.value : "";
 
+	
+			if(property == 'clock'){
+				if(value){
+					planetarium.clock = new Date(value);
+					changedtime = true;
+				}else{
+					planetarium.clock = new Date();
+					changedtime = false;
+				}
+			}
+			
+			if(property == 'position') planetarium.setGeo(value);
+
+			el = document.getElementById('position');
+			el.value = planetarium.latitude.deg+','+planetarium.longitude.deg;
+
+			planetarium.updateColours();
+			planetarium.draw();
+			planetarium.setClock(0);
+
+
+		}
+	</script>
 </head>
-
 <body>
 	<div class="search_area">
 		<form action="" method="GET">
@@ -63,8 +147,34 @@
 		</form>
 		<div id="search_advice_wrapper"></div>
 	</div>
+
+<form>
+<ol>
+	<li class="options">
+		<div class="i">
+			<label class="p" for="clock">Specific date?</label>
+			<div class="o">
+			<input type="text" name="clock" id="clock" value="" onChange="update(this)" /> e.g. Sun, 02 Jan 2011 14:46:28 +0000 (leave blank for the current time)
+			</div>
+		</div>
+
+		<div class="i">
+			<label class="p" for="position">Latitude/longitude</label>
+			<div class="o">
+			<input type="text" name="position" id="position" value="" onChange="update(this)" /> in decimal degrees
+			</div>
+		</div>
+	</li>
+</ol>
+
+</form>
+
 </body>
+
+
 </html>
+
+
 
 <script type="text/javascript">
     var suggest_count = 0;
@@ -72,6 +182,7 @@
     var suggest_selected = 0;
     
     $(window).load(function(){
+		$('#position').inp
         // читаем ввод с клавиатуры
         $("#search_box").keyup(function(I){
             // определяем какие действия нужно делать при нажатии на клавиатуру
@@ -135,7 +246,11 @@
         $('.advice_variant').live('click',function(){
             // ставим текст в input поиска
             $('#search_box').val($(this).text().split(',')[0]+','+$(this).text().split(',')[1]);
-            $('#latcon').text($(this).text().split(',')[2]+','+$(this).text().split(',')[3])
+            $('#latcon').text($(this).text().split(',')[2]+','+$(this).text().split(',')[3]);
+			$('#position').val($(this).text().split(',')[2]+','+$(this).text().split(',')[3]);
+			planetarium.setGeo($(this).text().split(',')[2]+','+$(this).text().split(',')[3]);
+			planetarium.draw();
+			console.log($(this).text().split(',')[2]+','+$(this).text().split(',')[3]);
             // прячем слой подсказки
             $('#search_advice_wrapper').fadeOut(350).html('');
         });

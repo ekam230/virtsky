@@ -1,5 +1,5 @@
 <?php
-
+// phpinfo(INFO_MODULES);
 // echo('dsadsadas');
 // if(!empty($_GET['query'])){
 // 		$query = (string)$_GET['query'];
